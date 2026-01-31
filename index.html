@@ -1,34 +1,194 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS1 Style App</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <title>IYORSHKA App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             image-rendering: pixelated;
-            image-rendering: crisp-edges;
         }
         
         body {
-            font-family: 'VT323', monospace;
+            font-family: 'Press Start 2P', cursive;
             background: #0a0a0a;
+            min-height: 100vh;
             overflow: hidden;
         }
         
-        .ps1-font {
+        /* Hexagon Background */
+        .hex-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 56px 97px;
+            animation: hexMove 20s linear infinite;
+        }
+        
+        @keyframes hexMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(56px, 97px); }
+        }
+        
+        /* Chromatic Aberration */
+        .chromatic-border {
+            position: relative;
+        }
+        
+        .chromatic-border::before,
+        .chromatic-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid transparent;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .chromatic-border::before {
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translate(-3px, -1px);
+            filter: blur(1px);
+        }
+        
+        .chromatic-border::after {
+            border-color: rgba(0, 255, 255, 0.4);
+            transform: translate(3px, 1px);
+            filter: blur(1px);
+        }
+        
+        /* Side Light Effect */
+        .side-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            background: 
+                linear-gradient(90deg, 
+                    rgba(255, 255, 255, 0.03) 0%, 
+                    transparent 20%,
+                    transparent 80%,
+                    rgba(255, 255, 255, 0.03) 100%);
+        }
+        
+        /* Main Window */
+        .main-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid #ffffff;
+            box-shadow: 
+                8px 8px 0 rgba(0, 0, 0, 0.8),
+                -2px -2px 0 rgba(255, 255, 0, 0.1),
+                inset 0 0 30px rgba(255, 255, 255, 0.02);
+            min-width: 400px;
+            min-height: 300px;
+        }
+        
+        /* Window Header */
+        .window-header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            border-bottom: 2px solid #ffffff;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* Button */
+        .main-button {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #1a1a1a 100%);
+            border: 3px solid #ffffff;
+            color: #ffffff;
+            padding: 20px 40px;
             font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 
+                4px 4px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
         }
         
-        .pixel-font {
-            font-family: 'VT323', monospace;
+        .main-button:hover {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            box-shadow: 
+                2px 2px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.2);
+            transform: translate(2px, 2px);
         }
         
-        /* CRT Scanlines */
+        .main-button:active {
+            box-shadow: 
+                0px 0px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.2);
+            transform: translate(4px, 4px);
+        }
+        
+        /* Button Chromatic Effect */
+        .main-button::before {
+            content: 'IYORSHKA';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .main-button::after {
+            content: 'IYORSHKA';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(0, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Click Counter */
+        .counter-box {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            box-shadow: 
+                4px 4px 0 rgba(0, 0, 0, 0.8),
+                inset 0 0 10px rgba(255, 255, 255, 0.05);
+            min-width: 120px;
+        }
+        
+        /* Scanlines */
         .scanlines {
             position: fixed;
             top: 0;
@@ -36,7 +196,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1000;
+            z-index: 100;
             background: repeating-linear-gradient(
                 0deg,
                 rgba(0, 0, 0, 0.15),
@@ -46,132 +206,7 @@
             );
         }
         
-        /* Screen flicker animation */
-        @keyframes flicker {
-            0% { opacity: 0.97; }
-            5% { opacity: 0.95; }
-            10% { opacity: 0.9; }
-            15% { opacity: 0.95; }
-            20% { opacity: 0.99; }
-            25% { opacity: 0.95; }
-            30% { opacity: 0.9; }
-            35% { opacity: 0.96; }
-            40% { opacity: 0.98; }
-            45% { opacity: 0.95; }
-            50% { opacity: 0.99; }
-            55% { opacity: 0.93; }
-            60% { opacity: 0.9; }
-            65% { opacity: 0.96; }
-            70% { opacity: 1; }
-            75% { opacity: 0.97; }
-            80% { opacity: 0.95; }
-            85% { opacity: 0.92; }
-            90% { opacity: 0.96; }
-            95% { opacity: 0.99; }
-            100% { opacity: 0.94; }
-        }
-        
-        .screen-flicker {
-            animation: flicker 0.15s infinite;
-        }
-        
-        /* Chromatic aberration effect */
-        .chromatic-aberration {
-            position: relative;
-        }
-        
-        .chromatic-aberration::before,
-        .chromatic-aberration::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .chromatic-aberration::before {
-            color: rgba(255, 0, 0, 0.5);
-            animation: shift-red 3s ease-in-out infinite;
-            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        }
-        
-        .chromatic-aberration::after {
-            color: rgba(0, 255, 255, 0.5);
-            animation: shift-blue 3s ease-in-out infinite;
-            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-        }
-        
-        @keyframes shift-red {
-            0%, 100% { transform: translateX(-2px); }
-            50% { transform: translateX(2px); }
-        }
-        
-        @keyframes shift-blue {
-            0%, 100% { transform: translateX(2px); }
-            50% { transform: translateX(-2px); }
-        }
-        
-        /* Chromatic border effect */
-        .chromatic-border {
-            position: relative;
-            box-shadow: 
-                -3px 0 0 rgba(255, 0, 0, 0.3),
-                3px 0 0 rgba(0, 255, 255, 0.3);
-        }
-        
-        /* Dithering pattern overlay */
-        .dither {
-            position: relative;
-        }
-        
-        .dither::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px),
-                radial-gradient(circle at 75% 75%, rgba(0,0,0,0.2) 1px, transparent 1px);
-            background-size: 4px 4px;
-            pointer-events: none;
-        }
-        
-        /* PS1 Button styles */
-        .ps1-btn {
-            background: linear-gradient(145deg, #e0e0e0, #a0a0a0);
-            border: 3px solid #404040;
-            box-shadow: 
-                inset -2px -2px 0 #606060,
-                inset 2px 2px 0 #ffffff,
-                4px 4px 0 #000000;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            transition: all 0.1s;
-        }
-        
-        .ps1-btn:hover {
-            background: linear-gradient(145deg, #f0f0f0, #c0c0c0);
-            transform: translate(2px, 2px);
-            box-shadow: 
-                inset -2px -2px 0 #606060,
-                inset 2px 2px 0 #ffffff,
-                2px 2px 0 #000000;
-        }
-        
-        .ps1-btn:active {
-            transform: translate(4px, 4px);
-            box-shadow: 
-                inset -2px -2px 0 #606060,
-                inset 2px 2px 0 #ffffff,
-                0px 0px 0 #000000;
-        }
-        
-        /* Noise texture */
+        /* Noise */
         .noise {
             position: fixed;
             top: 0;
@@ -179,140 +214,93 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 999;
-            opacity: 0.05;
+            z-index: 99;
+            opacity: 0.03;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
         
-        /* Retro container */
-        .retro-container {
-            background: #c0c0c0;
-            border: 4px solid #404040;
-            box-shadow: 
-                inset -4px -4px 0 #808080,
-                inset 4px 4px 0 #ffffff,
-                8px 8px 0 #000000;
-            image-rendering: pixelated;
+        /* Corner Decorations */
+        .corner-decoration {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border: 2px solid #ffffff;
         }
         
-        /* Blinking cursor */
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        
-        .cursor-blink::after {
-            content: '█';
-            animation: blink 1s infinite;
-            margin-left: 4px;
-        }
-        
-        /* Vignette effect */
-        .vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 998;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%);
-        }
-        
-        /* Loading bar animation */
-        @keyframes load {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        
-        .loading-bar {
-            animation: load 2s ease-out forwards;
-        }
+        .corner-tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .corner-tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .corner-br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
     </style>
 </head>
-<body class="min-h-screen bg-neutral-900 flex items-center justify-center p-4 grayscale screen-flicker">
-    <!-- Noise overlay -->
+<body>
+    <!-- Background Elements -->
+    <div class="hex-pattern"></div>
+    <div class="side-light"></div>
     <div class="noise"></div>
-    
-    <!-- Scanlines -->
     <div class="scanlines"></div>
     
-    <!-- Vignette -->
-    <div class="vignette"></div>
-    
-    <!-- Main container -->
-    <div class="retro-container p-8 max-w-2xl w-full relative z-10 chromatic-border">
-        <!-- Header with dithering -->
-        <div class="dither border-b-4 border-neutral-600 pb-4 mb-6">
-            <h1 class="text-2xl ps1-font text-neutral-800 text-center leading-relaxed" data-text="CIEMAYDO">
-                CIEMAYDO
-            </h1>
-            <p class="text-center pixel-font text-lg text-neutral-600 mt-2">
-                MEMORY CARD: 15 BLOCKS FREE
-            </p>
-        </div>
-        
-        <!-- Menu buttons -->
-        <div class="flex gap-4 justify-center">
-            <!-- Nexus button -->
-            <button 
-                onclick="window.open('https://www.nexusmods.com/profile/IYorshka/media', '_blank')"
-                class="ps1-btn py-4 px-8 text-neutral-800 ps1-font text-sm flex items-center justify-between group"
-            >
-                <span class="chromatic-aberration" data-text="► NEXUS SITE">
-                    ► NEXUS SITE
-                </span>
-                <span class="pixel-font text-neutral-600">[START]</span>
-            </button>
-        </div>
-        
-        <!-- Footer info -->
-        <div class="border-t-4 border-neutral-600 pt-4 mt-6">
-            <div class="flex justify-between items-center">
-                <p class="pixel-font text-neutral-600 text-lg">
-                    SELECT: ENTER
-                </p>
-                <p class="pixel-font text-neutral-500">
-                    ver 1.0
-                </p>
-            </div>
-            <p class="pixel-font text-neutral-500 text-center mt-2 text-sm cursor-blink">
-                INSERT MEMORY CARD
-            </p>
-        </div>
-        
-        <!-- PS1 style loading indicator -->
-        <div class="mt-6 border-2 border-neutral-600 p-1 bg-neutral-700">
-            <div class="loading-bar h-2 bg-neutral-400"></div>
+    <!-- Counter Box -->
+    <div class="counter-box chromatic-border" style="position: fixed; top: 20px; right: 20px; z-index: 10;">
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: #888;">CLICKS:</span>
+            <span id="clickCount" style="color: #fff;">0</span>
         </div>
     </div>
-
+    
+    <!-- Main Window -->
+    <div class="main-window chromatic-border">
+        <!-- Window Header -->
+        <div class="window-header">
+            <div class="window-title">IYORSHKA</div>
+            <div style="display: flex; gap: 8px;">
+                <div class="window-btn" style="background: #444; width: 12px; height: 12px; border: 1px solid #fff;"></div>
+                <div class="window-btn" style="background: #666; width: 12px; height: 12px; border: 1px solid #fff;"></div>
+                <div class="window-btn" style="background: #888; width: 12px; height: 12px; border: 1px solid #fff;"></div>
+            </div>
+        </div>
+        
+        <!-- Window Content -->
+        <div style="padding: 60px 80px; display: flex; justify-content: center; align-items: center; position: relative;">
+            <!-- Corner Decorations -->
+            <div class="corner-decoration corner-tl"></div>
+            <div class="corner-decoration corner-tr"></div>
+            <div class="corner-decoration corner-bl"></div>
+            <div class="corner-decoration corner-br"></div>
+            
+            <button class="main-button" onclick="openProfile()">
+                IYORSHKA
+            </button>
+        </div>
+    </div>
+    
     <script>
+        let clickCount = 0;
+        
+        function openProfile() {
+            clickCount++;
+            document.getElementById('clickCount').textContent = clickCount;
+            
+            // Add click effect
+            const btn = document.querySelector('.main-button');
+            btn.style.filter = 'brightness(1.5)';
+            setTimeout(() => {
+                btn.style.filter = 'brightness(1)';
+            }, 100);
+            
+            window.open('https://www.nexusmods.com/profile/IYorshka', '_blank');
+        }
+        
         // Random glitch effect
         setInterval(() => {
-            const container = document.querySelector('.retro-container');
+            const window = document.querySelector('.main-window');
             if (Math.random() > 0.95) {
-                container.style.transform = `translateX(${Math.random() * 4 - 2}px)`;
+                window.style.transform = `translate(calc(-50% + ${Math.random() * 4 - 2}px), -50%)`;
                 setTimeout(() => {
-                    container.style.transform = 'translateX(0)';
+                    window.style.transform = 'translate(-50%, -50%)';
                 }, 50);
             }
         }, 100);
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            const buttons = document.querySelectorAll('.ps1-btn');
-            const currentFocus = document.activeElement;
-            const currentIndex = Array.from(buttons).indexOf(currentFocus);
-            
-            if (e.key === 'ArrowDown' && currentIndex < buttons.length - 1) {
-                buttons[currentIndex + 1].focus();
-                e.preventDefault();
-            } else if (e.key === 'ArrowUp' && currentIndex > 0) {
-                buttons[currentIndex - 1].focus();
-                e.preventDefault();
-            }
-        });
     </script>
 </body>
 </html>
