@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYORSHKA - MODS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Hexagon Background */
+        .hex-pattern {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            z-index: 1;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 56px 97px;
+            animation: hexMoveDown 120s linear infinite;
+        }
+        
+        @keyframes hexMoveDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+        
+        /* VHS Artifacts */
+        .vhs-left, .vhs-right {
+            position: fixed;
+            top: 0;
+            width: 120px;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .vhs-left { left: 0; }
+        .vhs-right { right: 0; }
+        
+        .vhs-left::before, .vhs-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(255, 0, 0, 0.03) 2px,
+                rgba(255, 0, 0, 0.03) 4px,
+                transparent 4px,
+                transparent 8px,
+                rgba(0, 255, 255, 0.03) 8px,
+                rgba(0, 255, 255, 0.03) 10px
+            );
+            animation: vhsScroll 0.5s linear infinite;
+        }
+        
+        .vhs-left::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255, 0, 0, 0.1) 0%, 
+                rgba(0, 255, 255, 0.05) 30%,
+                transparent 100%);
+            animation: vhsGlitch 3s ease-in-out infinite;
+        }
+        
+        .vhs-right::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-90deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                rgba(255, 0, 0, 0.05) 30%,
+                transparent 100%);
+            animation: vhsGlitch 3s ease-in-out infinite;
+        }
+        
+        @keyframes vhsScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+        
+        @keyframes vhsGlitch {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+        
+        /* Noise */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        
+        /* Horizontal Line */
+        .horizontal-line {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ffffff;
+            z-index: 9;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        .horizontal-line::before,
+        .horizontal-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+        }
+        
+        .horizontal-line::before {
+            top: -1px;
+            background: rgba(255, 0, 0, 0.3);
+        }
+        
+        .horizontal-line::after {
+            top: 1px;
+            background: rgba(0, 255, 255, 0.3);
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: calc(100vw - 40px);
+        }
+
+        .nav-tab {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 10px 18px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            box-shadow: 
+                3px 3px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+            user-select: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            border-left: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            transform: rotate(-45deg) translate(5px, -5px);
+            background: transparent;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-4px);
+            background: rgba(30, 30, 30, 0.95);
+            box-shadow: 
+                3px 7px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab:active {
+            transform: translateY(-2px);
+            box-shadow: 
+                3px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background: rgba(50, 50, 50, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 
+                3px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-tab:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            box-shadow: 
+                -2px 0 0 rgba(255, 0, 0, 0.3),
+                2px 0 0 rgba(0, 255, 255, 0.3);
+            pointer-events: none;
+        }
+        
+        /* Page Title */
+        .page-title {
+            position: fixed;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            font-size: 14px;
+            color: #000000;
+            text-shadow: 
+                -1px -1px 0 #ffffff,
+                1px -1px 0 #ffffff,
+                -1px 1px 0 #ffffff,
+                1px 1px 0 #ffffff,
+                0 0 2px #ffffff;
+            letter-spacing: 3px;
+        }
+        
+        /* Chromatic Border */
+        .chromatic-border {
+            position: relative;
+        }
+        
+        .chromatic-border::before,
+        .chromatic-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid transparent;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .chromatic-border::before {
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translate(-3px, -1px);
+            filter: blur(1px);
+        }
+        
+        .chromatic-border::after {
+            border-color: rgba(0, 255, 255, 0.4);
+            transform: translate(3px, 1px);
+            filter: blur(1px);
+        }
+        
+        /* Mods Container */
+        .mods-container {
+            position: relative;
+            z-index: 5;
+            padding: 130px 40px 40px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Mods Grid */
+        .mods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(260px, 320px));
+            gap: 26px;
+            max-width: 1040px;
+            justify-content: center;
+        }
+
+        @media (max-width: 1100px) {
+            .mods-grid {
+                grid-template-columns: repeat(2, minmax(260px, 320px));
+                max-width: 700px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .mods-grid {
+                grid-template-columns: minmax(260px, 1fr);
+                max-width: 360px;
+            }
+        }
+        
+        /* Mod Card */
+        .mod-card {
+            position: relative;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid #ffffff;
+            box-shadow: 
+                5px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+        }
+        
+        .mod-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 
+                8px 8px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .mod-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            object-position: top center;
+            filter: grayscale(30%) contrast(1.1);
+            transition: filter 0.3s;
+        }
+        
+        .mod-card:hover img {
+            filter: grayscale(0%) contrast(1.2);
+        }
+        
+        /* Chromatic effect on images */
+        .mod-image-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mod-image-wrapper::before,
+        .mod-image-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .mod-image-wrapper::before {
+            background: linear-gradient(90deg, rgba(255, 0, 0, 0.1) 0%, transparent 20%, transparent 80%, rgba(0, 255, 255, 0.1) 100%);
+            mix-blend-mode: screen;
+        }
+        
+        .mod-image-wrapper::after {
+            box-shadow: 
+                inset -3px 0 0 rgba(255, 0, 0, 0.2),
+                inset 3px 0 0 rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Mod Info */
+        .mod-info {
+            padding: 12px;
+            border-top: 2px solid #333;
+        }
+        
+        .mod-title {
+            font-size: 7px;
+            color: #ffffff;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            letter-spacing: 1px;
+        }
+        
+        .mod-game {
+            font-size: 6px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+        
+        /* Like Button */
+        .like-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 
+                2px 2px 0 rgba(0, 0, 0, 0.8);
+            z-index: 5;
+        }
+        
+        .like-btn:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 
+                1px 1px 0 rgba(0, 0, 0, 0.8);
+        }
+        
+        .like-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 
+                0px 0px 0 rgba(0, 0, 0, 0.8);
+        }
+        
+        .like-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2;
+            transition: all 0.2s;
+        }
+        
+        .like-btn.liked svg {
+            fill: #ff4444;
+            stroke: #ff4444;
+        }
+        
+        .like-btn.liked {
+            border-color: #ff4444;
+        }
+        
+        /* Counter */
+        .counter-box {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 6px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            box-shadow: 
+                3px 3px 0 rgba(0, 0, 0, 0.8),
+                inset 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Corner Decorations */
+        .corner-decoration {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border: 2px solid #ffffff;
+        }
+        
+        .corner-tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .corner-tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .corner-br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+        
+        /* Custom Cursor */
+        * {
+            cursor: none !important;
+        }
+        
+        .custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        .cursor-triangle {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid #ffffff;
+            transform: translate(-6px, -2px) rotate(-30deg);
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+        }
+        
+        .cursor-triangle-red {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid rgba(255, 0, 0, 0.5);
+            transform: translate(-8px, -3px) rotate(-30deg);
+            filter: blur(1px);
+        }
+        
+        .cursor-triangle-cyan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid rgba(0, 255, 255, 0.5);
+            transform: translate(-4px, -1px) rotate(-30deg);
+            filter: blur(1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-triangle-red"></div>
+        <div class="cursor-triangle-cyan"></div>
+        <div class="cursor-triangle"></div>
+    </div>
+    <!-- Background Elements -->
+    <div class="hex-pattern"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    
+    <!-- VHS Artifacts -->
+    <div class="vhs-left"></div>
+    <div class="vhs-right"></div>
+    
+    <!-- Horizontal Line -->
+    <div class="horizontal-line"></div>
+    
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs" id="navTabs">
+        <a class="nav-tab" href="index.html">HOME</a>
+        <a class="nav-tab" href="shots.html" target="_self">SHOTS</a>
+        <a class="nav-tab active" href="mods.html" target="_self">MODS</a>
+        <a class="nav-tab" href="credits.html" target="_self">CREDITS</a>
+        <a class="nav-tab" href="contacts.html" target="_self">CONTACTS</a>
+    </div>
+    
+    <!-- Page Title -->
+    <div class="page-title">MY MODS</div>
+    
+    <!-- Counter -->
+    <div style="position: fixed; top: 75px; right: 20px; z-index: 10;">
+        <div class="counter-box chromatic-border">
+            <span style="color: #888;">MODS:</span>
+            <span id="modCount" style="color: #fff;">4</span>
+        </div>
+    </div>
+    
+    <!-- Mods Container -->
+    <div class="mods-container">
+        <div class="mods-grid">
+            
+            <!-- Mod 1 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/171124" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+                
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+                
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/171124/171124-1769717573-365675591.jpg" alt="SAM - Light Placer Presets">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">SAM - LIGHT PLACER PRESETS</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+            
+            <!-- Mod 2 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/166019" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+                
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+                
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/166019/166019-1764637585-263911352.jpg" alt="UBE Mari - RM Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE MARI - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+            
+            <!-- Mod 3 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/165712" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+                
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+                
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/165712/165712-1764456883-837814769.png" alt="UBE Sofiya - RM Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE SOFIYA - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+            
+            <!-- Mod 4 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/168654" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+                
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+                
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/168654/168654-1767390638-35908015.png" alt="UBE Meredit - RM Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE MEREDIT - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 5 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/169371" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/169371/169371-1768068631-1344154073.png" alt="UBE Lisa - RM Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE LISA - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 6 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/168315" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/168315/168315-1767026723-522066664.png" alt="UBE Marta - RM Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE MARTA - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 7 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/168327" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/168327/168327-1767032341-1842178006.png" alt="UBE Dress Queen - BS Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE DRESS QUEEN - BS PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 8 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/166490" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/166490/166490-1765119025-34993100.png" alt="UBE Follower - Sofiya">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE FOLLOWER - SOFIYA</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 9 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/165561" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/165561/165561-1764188351-687158029.png" alt="UBE Alice Cosplay - RM Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE ALICE COSPLAY - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+            
+        </div>
+    </div>
+
+    <script>
+        // Toggle like button
+        function toggleLike(event, btn) {
+            event.preventDefault();
+            event.stopPropagation();
+            btn.classList.toggle('liked');
+        }
+        
+        // Count mods
+        const mods = document.querySelectorAll('.mod-card');
+        document.getElementById('modCount').textContent = mods.length;
+        
+        // Custom Cursor
+        const customCursor = document.getElementById('customCursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            customCursor.style.left = e.clientX + 'px';
+            customCursor.style.top = e.clientY + 'px';
+        });
+        
+        document.addEventListener('mouseleave', () => {
+            customCursor.style.opacity = '0';
+        });
+        
+        document.addEventListener('mouseenter', () => {
+            customCursor.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

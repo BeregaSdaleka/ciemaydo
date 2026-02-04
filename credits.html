@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IYORSHKA - CREDITS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Hexagon Background */
+        .hex-pattern {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            z-index: 1;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 56px 97px;
+            animation: hexMoveDown 120s linear infinite;
+        }
+
+        @keyframes hexMoveDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+
+        /* Side Light Effect */
+        .side-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            background:
+                linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.03) 0%,
+                    transparent 20%,
+                    transparent 80%,
+                    rgba(255, 255, 255, 0.03) 100%);
+        }
+
+        /* VHS Artifacts */
+        .vhs-left, .vhs-right {
+            position: fixed;
+            top: 0;
+            width: 120px;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .vhs-left { left: 0; }
+        .vhs-right { right: 0; }
+
+        .vhs-left::before, .vhs-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(255, 0, 0, 0.03) 2px,
+                rgba(255, 0, 0, 0.03) 4px,
+                transparent 4px,
+                transparent 8px,
+                rgba(0, 255, 255, 0.03) 8px,
+                rgba(0, 255, 255, 0.03) 10px
+            );
+            animation: vhsScroll 0.5s linear infinite;
+        }
+
+        .vhs-left::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                rgba(255, 0, 0, 0.1) 0%,
+                rgba(0, 255, 255, 0.05) 30%,
+                transparent 100%);
+            animation: vhsGlitch 3s ease-in-out infinite;
+        }
+
+        .vhs-right::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-90deg,
+                rgba(0, 255, 255, 0.1) 0%,
+                rgba(255, 0, 0, 0.05) 30%,
+                transparent 100%);
+            animation: vhsGlitch 3s ease-in-out infinite;
+        }
+
+        @keyframes vhsScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        @keyframes vhsGlitch {
+            0%, 100% { opacity: 0.25; transform: translateX(0); }
+            50% { opacity: 0.4; transform: translateX(1px); }
+        }
+
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        /* Noise */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Horizontal Line */
+        .horizontal-line {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ffffff;
+            z-index: 9;
+            box-shadow:
+                0 0 10px rgba(255, 255, 255, 0.3),
+                0 2px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        .horizontal-line::before,
+        .horizontal-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+        }
+
+        .horizontal-line::before {
+            top: -1px;
+            background: rgba(255, 0, 0, 0.3);
+        }
+
+        .horizontal-line::after {
+            top: 1px;
+            background: rgba(0, 255, 255, 0.3);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: calc(100vw - 40px);
+        }
+
+        .nav-tab {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 10px 18px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            box-shadow:
+                3px 3px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+            user-select: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            border-left: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            transform: rotate(-45deg) translate(5px, -5px);
+            background: transparent;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-4px);
+            background: rgba(30, 30, 30, 0.95);
+            box-shadow:
+                3px 7px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab:active {
+            transform: translateY(-2px);
+            box-shadow:
+                3px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background: rgba(50, 50, 50, 0.95);
+            transform: translateY(-2px);
+            box-shadow:
+                3px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-tab:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            box-shadow:
+                -2px 0 0 rgba(255, 0, 0, 0.3),
+                2px 0 0 rgba(0, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        /* Chromatic Border */
+        .chromatic-border {
+            position: relative;
+        }
+
+        .chromatic-border::before,
+        .chromatic-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid transparent;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .chromatic-border::before {
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translate(-3px, -1px);
+            filter: blur(1px);
+        }
+
+        .chromatic-border::after {
+            border-color: rgba(0, 255, 255, 0.4);
+            transform: translate(3px, 1px);
+            filter: blur(1px);
+        }
+
+        /* Main Container */
+        .main-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 36px 34px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid #ffffff;
+            box-shadow:
+                8px 8px 0 rgba(0, 0, 0, 0.8),
+                -2px -2px 0 rgba(255, 255, 0, 0.1),
+                inset 0 0 30px rgba(255, 255, 255, 0.02);
+            max-width: 720px;
+            width: 90%;
+        }
+
+        /* Corner Decorations */
+        .corner-decoration {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border: 2px solid #ffffff;
+        }
+
+        .corner-tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .corner-tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .corner-br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        /* Typewriter */
+        .typewrap {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 12px;
+            color: #000;
+            text-shadow:
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff,
+                0 0 2px #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        #typedText {
+            font-size: 10px;
+            color: #ffffff;
+            line-height: 2;
+            letter-spacing: 1px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            text-shadow:
+                -1px -1px 0 rgba(255, 0, 0, 0.25),
+                1px 1px 0 rgba(0, 255, 255, 0.25);
+        }
+
+        .caret {
+            display: inline-block;
+            width: 10px;
+            height: 12px;
+            border-bottom: 2px solid #ffffff;
+            transform: translateY(-2px);
+            animation: blink 0.8s steps(1) infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Custom Cursor */
+        * { cursor: none !important; }
+
+        .custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .cursor-triangle {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid #ffffff;
+            transform: translate(-6px, -2px) rotate(-30deg);
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+        }
+
+        .cursor-triangle-red {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid rgba(255, 0, 0, 0.5);
+            transform: translate(-8px, -3px) rotate(-30deg);
+            filter: blur(1px);
+        }
+
+        .cursor-triangle-cyan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid rgba(0, 255, 255, 0.5);
+            transform: translate(-4px, -1px) rotate(-30deg);
+            filter: blur(1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-triangle-red"></div>
+        <div class="cursor-triangle-cyan"></div>
+        <div class="cursor-triangle"></div>
+    </div>
+
+    <!-- Background Elements -->
+    <div class="hex-pattern"></div>
+    <div class="side-light"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+
+    <!-- VHS Artifacts -->
+    <div class="vhs-left"></div>
+    <div class="vhs-right"></div>
+
+    <!-- Horizontal Line -->
+    <div class="horizontal-line"></div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs" id="navTabs">
+        <a class="nav-tab" href="index.html">HOME</a>
+        <a class="nav-tab" href="shots.html" target="_self">SHOTS</a>
+        <a class="nav-tab" href="mods.html" target="_self">MODS</a>
+        <a class="nav-tab active" href="credits.html" target="_self">CREDITS</a>
+        <a class="nav-tab" href="contacts.html" target="_self">CONTACTS</a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container chromatic-border">
+        <div class="corner-decoration corner-tl"></div>
+        <div class="corner-decoration corner-tr"></div>
+        <div class="corner-decoration corner-bl"></div>
+        <div class="corner-decoration corner-br"></div>
+
+        <div class="typewrap">
+            <div class="page-title" id="creditsToggle" title="click">CREDITS</div>
+            <div id="typedText"></div>
+
+            <!-- Hidden joke panel (appears only after clicking CREDITS) -->
+            <div id="banWrap" style="display:none; margin-top: 18px; padding-top: 14px; border-top: 1px solid #333;">
+                <div id="banText" aria-hidden="true" style="font-size: 16px; line-height: 1.8; color: #ff3b3b; letter-spacing: 2px; text-shadow: -1px -1px 0 rgba(0,255,255,0.25), 1px 1px 0 rgba(255,0,0,0.25); user-select: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Typewriter
+        const fullText = "Я хочу поблагодарить свою маму, папу и сестру за то что есть у меня и дают мне мотивацию становиться лучше";
+        const el = document.getElementById('typedText');
+
+        let i = 0;
+        const caret = document.createElement('span');
+        caret.className = 'caret';
+
+        function tick() {
+            // Slightly variable speed for natural typing
+            const base = 13;
+            const jitter = Math.floor(Math.random() * 15);
+
+            el.textContent = fullText.slice(0, i);
+            el.appendChild(caret);
+
+            if (i < fullText.length) {
+                i++;
+                const ch = fullText[i - 1] || '';
+                const extra = (ch === ' ' ? 10 : 0) + (ch === ',' ? 120 : 0) + (ch === '.' ? 180 : 0);
+                setTimeout(tick, base + jitter + extra);
+            } else {
+                // Keep caret blinking at the end
+                el.textContent = fullText;
+                el.appendChild(caret);
+            }
+        }
+
+        // start after a short delay
+        setTimeout(tick, 350);
+
+        // Hidden joke panel
+        const banWrap = document.getElementById('banWrap');
+        const banText = document.getElementById('banText');
+        const creditsToggle = document.getElementById('creditsToggle');
+
+        const BAN_LINES = ["ЮРА ТЕБЕ БАН", "МАКС ТЕБЕ БАН"];
+
+        function buildBanLetters() {
+            if (!banText) return;
+            banText.innerHTML = '';
+            const text = BAN_LINES.join('\n');
+            let idx = 0;
+            for (const ch of text) {
+                if (ch === '\n') {
+                    banText.appendChild(document.createElement('br'));
+                    continue;
+                }
+                const span = document.createElement('span');
+                span.className = 'ban-letter';
+                span.textContent = ch;
+                span.style.display = 'inline-block';
+                span.style.willChange = 'transform';
+                span.dataset.i = String(idx++);
+                banText.appendChild(span);
+            }
+        }
+
+        let banAnimId = null;
+        let banStart = 0;
+        function animateBan(ts) {
+            if (!banStart) banStart = ts;
+            const t = (ts - banStart) / 1000;
+            const letters = banText ? banText.querySelectorAll('.ban-letter') : [];
+            letters.forEach((el) => {
+                const i = Number(el.dataset.i || '0');
+                // small circular shake
+                const r = 2.4; // px
+                const w = 7.5; // speed
+                const a = t * w + i * 0.22;
+                const x = Math.cos(a) * r;
+                const y = Math.sin(a) * r;
+                el.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
+            });
+            banAnimId = requestAnimationFrame(animateBan);
+        }
+
+        function showBan() {
+            if (!banWrap) return;
+            banWrap.style.display = 'block';
+            buildBanLetters();
+            if (banAnimId) cancelAnimationFrame(banAnimId);
+            banStart = 0;
+            banAnimId = requestAnimationFrame(animateBan);
+        }
+
+        if (creditsToggle) creditsToggle.addEventListener('click', showBan);
+
+        // Custom Cursor
+        const customCursor = document.getElementById('customCursor');
+
+        document.addEventListener('mousemove', (e) => {
+            customCursor.style.left = e.clientX + 'px';
+            customCursor.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mouseleave', () => {
+            customCursor.style.opacity = '0';
+        });
+
+        document.addEventListener('mouseenter', () => {
+            customCursor.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

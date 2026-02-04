@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYORSHKA - SHOTS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Hexagon Background */
+        .hex-pattern {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            z-index: 1;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 56px 97px;
+            animation: hexMoveDown 120s linear infinite;
+        }
+        
+        @keyframes hexMoveDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+        
+        /* VHS Artifacts */
+        .vhs-left, .vhs-right {
+            position: fixed;
+            top: 0;
+            width: 120px;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .vhs-left { left: 0; }
+        .vhs-right { right: 0; }
+        
+        .vhs-left::before, .vhs-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(255, 0, 0, 0.03) 2px,
+                rgba(255, 0, 0, 0.03) 4px,
+                transparent 4px,
+                transparent 8px,
+                rgba(0, 255, 255, 0.03) 8px,
+                rgba(0, 255, 255, 0.03) 10px
+            );
+            animation: vhsScroll 0.5s linear infinite;
+        }
+        
+        .vhs-left::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255, 0, 0, 0.1) 0%, 
+                rgba(0, 255, 255, 0.05) 30%,
+                transparent 100%);
+            animation: vhsGlitch 3s ease-in-out infinite;
+        }
+        
+        .vhs-right::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-90deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                rgba(255, 0, 0, 0.05) 30%,
+                transparent 100%);
+            animation: vhsGlitch 3s ease-in-out infinite;
+        }
+        
+        @keyframes vhsScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+        
+        @keyframes vhsGlitch {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+        
+        /* Noise */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        
+        /* Horizontal Line */
+        .horizontal-line {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ffffff;
+            z-index: 9;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        .horizontal-line::before,
+        .horizontal-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+        }
+        
+        .horizontal-line::before {
+            top: -1px;
+            background: rgba(255, 0, 0, 0.3);
+        }
+        
+        .horizontal-line::after {
+            top: 1px;
+            background: rgba(0, 255, 255, 0.3);
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: calc(100vw - 40px);
+        }
+
+        .nav-tab {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 10px 18px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            box-shadow: 
+                3px 3px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+            user-select: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            border-left: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            transform: rotate(-45deg) translate(5px, -5px);
+            background: transparent;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-4px);
+            background: rgba(30, 30, 30, 0.95);
+            box-shadow: 
+                3px 7px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab:active {
+            transform: translateY(-2px);
+            box-shadow: 
+                3px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background: rgba(50, 50, 50, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 
+                3px 5px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-tab:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            box-shadow: 
+                -2px 0 0 rgba(255, 0, 0, 0.3),
+                2px 0 0 rgba(0, 255, 255, 0.3);
+            pointer-events: none;
+        }
+        
+        /* Page Title */
+        .page-title {
+            position: fixed;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            font-size: 14px;
+            color: #000000;
+            text-shadow: 
+                -1px -1px 0 #ffffff,
+                1px -1px 0 #ffffff,
+                -1px 1px 0 #ffffff,
+                1px 1px 0 #ffffff,
+                0 0 2px #ffffff;
+            letter-spacing: 3px;
+        }
+        
+        /* Gallery Container */
+        .gallery-container {
+            position: relative;
+            z-index: 5;
+            padding: 130px 40px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Gallery Item */
+        .gallery-item {
+            position: relative;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid #ffffff;
+            box-shadow: 
+                4px 4px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+        }
+        
+        .gallery-item:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 
+                6px 6px 0 rgba(0, 0, 0, 0.8),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(30%) contrast(1.1);
+            transition: filter 0.3s;
+            display: block;
+        }
+        
+        .gallery-item:hover img {
+            filter: grayscale(0%) contrast(1.2);
+        }
+        
+        /* Chromatic aberration for images */
+        .gallery-item::before,
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .gallery-item::before {
+            background: linear-gradient(90deg, rgba(255, 0, 0, 0.1) 0%, transparent 20%, transparent 80%, rgba(0, 255, 255, 0.1) 100%);
+            mix-blend-mode: screen;
+        }
+        
+        .gallery-item::after {
+            box-shadow: 
+                inset -2px 0 0 rgba(255, 0, 0, 0.2),
+                inset 2px 0 0 rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Image Caption */
+        .gallery-caption {
+            padding: 10px;
+            font-size: 6px;
+            color: #888;
+            text-align: center;
+            border-top: 1px solid #333;
+            letter-spacing: 1px;
+        }
+        
+        /* Empty slot placeholder */
+        .empty-slot {
+            border: 3px dashed #333;
+            background: rgba(10, 10, 10, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: #333;
+            font-size: 8px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* Counter */
+        .counter-box {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 6px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            box-shadow: 
+                3px 3px 0 rgba(0, 0, 0, 0.8),
+                inset 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+        
+        .chromatic-border {
+            position: relative;
+        }
+        
+        .chromatic-border::before,
+        .chromatic-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid transparent;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .chromatic-border::before {
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translate(-3px, -1px);
+            filter: blur(1px);
+        }
+        
+        .chromatic-border::after {
+            border-color: rgba(0, 255, 255, 0.4);
+            transform: translate(3px, 1px);
+            filter: blur(1px);
+        }
+        
+        /* NSFW Gate Modal */
+        .blur-under {
+            filter: blur(8px);
+            transition: filter 0.2s ease-out;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 6000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(2px);
+        }
+        .lightbox.active { display: flex; }
+
+        .lightbox-window {
+            position: relative;
+            width: min(1200px, calc(100vw - 36px));
+            max-height: calc(100vh - 36px);
+            background: rgba(10, 10, 10, 0.97);
+            border: 3px solid #ffffff;
+            box-shadow:
+                8px 8px 0 rgba(0, 0, 0, 0.85),
+                -2px -2px 0 rgba(255, 255, 0, 0.08),
+                inset 0 0 30px rgba(255, 255, 255, 0.02);
+            padding: 14px;
+            overflow: hidden;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 34px;
+            height: 34px;
+            border: 2px solid #ffffff;
+            background: rgba(10,10,10,0.95);
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        .lightbox-media {
+            width: 100%;
+            height: 100%;
+            max-height: calc(100vh - 36px - 28px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-media img {
+            max-width: 100%;
+            max-height: calc(100vh - 36px - 28px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            image-rendering: auto;
+        }
+
+        .lightbox-hint {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 6px;
+            color: #777;
+            letter-spacing: 1px;
+        }
+
+        .gate-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(2px);
+        }
+
+        .gate-overlay.active { display: flex; }
+
+        .gate-window {
+            position: relative;
+            width: min(720px, calc(100vw - 36px));
+            background: rgba(10, 10, 10, 0.97);
+            border: 3px solid #ffffff;
+            box-shadow:
+                8px 8px 0 rgba(0, 0, 0, 0.85),
+                -2px -2px 0 rgba(255, 255, 0, 0.08),
+                inset 0 0 30px rgba(255, 255, 255, 0.02);
+            padding: 18px 18px 16px 18px;
+        }
+
+        .gate-text {
+            font-size: 8px;
+            line-height: 1.9;
+            color: #ddd;
+            letter-spacing: 1px;
+        }
+
+        .tag-sfw { color: #45ff7a; }
+        .tag-nsfw { color: #ff4b4b; }
+
+        .gate-check {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 7px;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+
+        .pixel-check {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            background: rgba(10,10,10,0.95);
+            box-shadow:
+                2px 2px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+            accent-color: #fff;
+        }
+
+        .gate-actions {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .gate-btn {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 10px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow:
+                3px 3px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .gate-btn:hover {
+            background: rgba(30, 30, 30, 0.95);
+            transform: translate(2px, 2px);
+            box-shadow:
+                1px 1px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .gate-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow:
+                0px 0px 0 rgba(0, 0, 0, 0.8),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .gate-btn[disabled] {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        /* Custom Cursor */
+        * {
+            cursor: none !important;
+        }
+        
+        .custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        .cursor-triangle {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid #ffffff;
+            transform: translate(-6px, -2px) rotate(-30deg);
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+        }
+        
+        .cursor-triangle-red {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid rgba(255, 0, 0, 0.5);
+            transform: translate(-8px, -3px) rotate(-30deg);
+            filter: blur(1px);
+        }
+        
+        .cursor-triangle-cyan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid rgba(0, 255, 255, 0.5);
+            transform: translate(-4px, -1px) rotate(-30deg);
+            filter: blur(1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-triangle-red"></div>
+        <div class="cursor-triangle-cyan"></div>
+        <div class="cursor-triangle"></div>
+    </div>
+    <!-- Background Elements -->
+    <div class="hex-pattern" id="hexPattern"></div>
+    <div class="noise" id="noiseLayer"></div>
+    <div class="scanlines" id="scanlinesLayer"></div>
+    
+    <!-- VHS Artifacts -->
+    <div class="vhs-left" id="vhsLeft"></div>
+    <div class="vhs-right" id="vhsRight"></div>
+    
+    <!-- Horizontal Line -->
+    <div class="horizontal-line" id="hLine"></div>
+
+    <!-- 18+ Gate (first visit only) -->
+    <div class="gate-overlay" id="gateOverlay" aria-modal="true" role="dialog">
+        <div class="gate-window chromatic-border">
+            <div class="corner-decoration corner-tl"></div>
+            <div class="corner-decoration corner-tr"></div>
+            <div class="corner-decoration corner-bl"></div>
+            <div class="corner-decoration corner-br"></div>
+
+            <div class="gate-text">
+                This page contains both <span class="tag-sfw">SFW</span> and <span class="tag-nsfw">NSFW</span> screenshots of my characters, so if you are under 18 years old or don’t want to embarrass someone who suddenly barges into your room, I recommend that you first think about it (～￣▽￣)～
+            </div>
+
+            <label class="gate-check">
+                <input type="checkbox" class="pixel-check" id="ageCheck" />
+                <span>I CONFIRM THAT I AM 18+</span>
+            </label>
+
+            <div class="gate-actions">
+                <button class="gate-btn" id="okBtn" disabled>Ok, i get it</button>
+                <button class="gate-btn" id="bruhBtn">Bruh</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs" id="navTabs">
+        <a class="nav-tab" href="index.html">HOME</a>
+        <a class="nav-tab active" href="shots.html" target="_self">SHOTS</a>
+        <a class="nav-tab" href="mods.html" target="_self">MODS</a>
+        <a class="nav-tab" href="credits.html" target="_self">CREDITS</a>
+        <a class="nav-tab" href="contacts.html" target="_self">CONTACTS</a>
+    </div>
+    
+    <!-- Page Title -->
+    <div class="page-title">MY SHOTS</div>
+    
+    <!-- Counter -->
+    <div style="position: fixed; top: 75px; right: 20px; z-index: 10;">
+        <div class="counter-box chromatic-border">
+            <span style="color: #888;">TOTAL:</span>
+            <span id="shotCount" style="color: #fff;">12</span>
+        </div>
+    </div>
+    
+    <!-- Gallery Container -->
+    <div class="gallery-container">
+        <div class="gallery-grid" id="galleryGrid"></div>
+
+        <!-- Pagination -->
+        <div id="pager" style="margin-top: 26px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center;"></div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
+        <div class="lightbox-window chromatic-border">
+            <button class="lightbox-close" id="lightboxClose" aria-label="Close">X</button>
+            <div class="lightbox-media">
+                <img id="lightboxImg" alt="Full size" />
+            </div>
+            <div class="lightbox-hint">ESC / CLICK OUTSIDE TO CLOSE</div>
+        </div>
+    </div>
+    
+    <script>
+        // Shots data (Direct image URLs)
+        const SHOTS = [
+            "https://i.postimg.cc/gcLcnqz2/Skyrim-SE-2025-12-26-21-51-04-454.png",
+            "https://i.postimg.cc/T1bTFG7J/Skyrim-SE-2025-12-26-21-52-16-048.png",
+            "https://i.postimg.cc/gJD5g0Pv/The-Elder-Scrolls-V-Skyrim-Special-Edition-Super-Resolution-2025-12-26-23-45-58-98.png",
+            "https://i.postimg.cc/y8F2fvPd/Skyrim-SE-2025-12-27-22-45-28-770.png",
+            "https://i.postimg.cc/cLQPDXmC/Skyrim-SE-2025-12-27-22-45-42-835.png",
+            "https://i.postimg.cc/qvf9X925/Skyrim-SE-2025-12-27-22-45-54-665.png",
+            "https://i.postimg.cc/26PPcJPW/Skyrim-SE-2025-12-27-21-32-45-081.png",
+            "https://i.postimg.cc/hjHHywHT/Skyrim-SE-2025-12-27-21-59-23-000.png",
+            "https://i.postimg.cc/pTggG7gd/Skyrim-SE-2025-12-27-22-06-40-324.png",
+            "https://i.postimg.cc/kgkR6m4j/Skyrim-SE-2025-12-28-17-56-41-321.png",
+            "https://i.postimg.cc/52HF20xm/Skyrim-SE-2025-12-28-17-58-55-121.png",
+            "https://i.postimg.cc/7YW32rHx/Skyrim-SE-2025-12-30-20-27-37-876.png",
+            "https://i.postimg.cc/tCM3xGXf/Skyrim-SE-2025-12-30-20-27-53-890.png",
+            "https://i.postimg.cc/BQdFpwgH/Skyrim-SE-2026-01-02-00-07-32-433.png",
+            "https://i.postimg.cc/gkfhsBDd/Skyrim-SE-2026-01-02-00-08-35-389.png",
+            "https://i.postimg.cc/rFv4jYJ4/Skyrim-SE-2026-01-02-00-09-18-914.png",
+            "https://i.postimg.cc/1R7wnzVw/Skyrim-SE-2026-01-02-00-09-50-275.png",
+            "https://i.postimg.cc/25JFp8dT/Skyrim-SE-2026-01-02-00-16-45-614.png",
+            "https://i.postimg.cc/qqYGQ4Jg/Skyrim-SE-2026-01-02-18-36-07-976.png",
+            "https://i.postimg.cc/6qShztWq/Skyrim-SE-2026-01-02-18-44-39-147.png",
+            "https://i.postimg.cc/6qShztWx/Skyrim-SE-2026-01-02-18-45-21-863.png",
+            "https://i.postimg.cc/XvJm273B/The-Elder-Scrolls-V-Skyrim-Special-Edition-Super-Resolution-2026-01-02-18-58-32-46.png",
+            "https://i.postimg.cc/VNWvFgfY/Skyrim-SE-2026-01-02-19-07-18-679.png",
+            "https://i.postimg.cc/VkkPTccb/Skyrim-SE-2026-01-02-19-48-03-465.png",
+            "https://i.postimg.cc/cLLGjNNt/Skyrim-SE-2026-01-02-19-49-13-415.png",
+            "https://i.postimg.cc/Nf4wpjZQ/Skyrim-SE-2026-01-02-19-50-03-171.png",
+            "https://i.postimg.cc/rp5w6VLw/Skyrim-SE-2026-01-03-01-55-16-877.png",
+            "https://i.postimg.cc/CKbxyhVM/Skyrim-SE-2026-01-03-02-11-03-701.png",
+            "https://i.postimg.cc/tgF40qGK/Skyrim-SE-2026-01-03-02-11-26-899.png",
+            "https://i.postimg.cc/9fyQ3mj5/Skyrim-SE-2026-01-03-02-12-27-339.png",
+            "https://i.postimg.cc/6QCpsWNx/Skyrim-SE-2026-01-03-02-28-34-877.png",
+            "https://i.postimg.cc/JhjzwrWw/Skyrim-SE-2026-01-03-02-29-32-372.png",
+            "https://i.postimg.cc/6qNyJgyp/The-Elder-Scrolls-V-Skyrim-Special-Edition-Super-Resolution-2026-01-03-20-22-05-04.png",
+            "https://i.postimg.cc/fWdSBbXm/Skyrim-SE-2026-01-04-03-00-33-105.png",
+            "https://i.postimg.cc/h4mQpGx7/Skyrim-SE-2026-01-04-03-03-55-000.png",
+            "https://i.postimg.cc/xjmNtdHm/Skyrim-SE-2026-01-04-03-04-45-708.png",
+            "https://i.postimg.cc/gchLN0RZ/Skyrim-SE-2026-01-04-03-07-55-379.png",
+            "https://i.postimg.cc/fWdSBbXS/Skyrim-SE-2026-01-04-03-09-04-187.png",
+            "https://i.postimg.cc/vTGzG6wQ/Skyrim-SE-2026-01-04-04-09-50-072.png",
+            "https://i.postimg.cc/90cpcqHm/Skyrim-SE-2026-01-04-04-11-53-883.png",
+            "https://i.postimg.cc/fWGnJ6d3/Skyrim-SE-2026-01-04-20-07-21-501.png",
+            "https://i.postimg.cc/VsxQd3tr/Skyrim-SE-2026-01-04-20-08-43-889.png",
+            "https://i.postimg.cc/rFMjnjXK/Skyrim-SE-2026-01-04-19-49-47-599.png",
+            "https://i.postimg.cc/VLmgGgQS/Skyrim-SE-2026-01-04-19-53-32-556.png",
+            "https://i.postimg.cc/qM4wbwVN/Skyrim-SE-2026-01-04-20-12-27-442.png",
+            "https://i.postimg.cc/Hn2hZP69/Skyrim-SE-2026-01-04-20-20-45-524.png",
+            "https://i.postimg.cc/vTzNqS0v/Skyrim-SE-2026-01-04-20-22-01-503.png",
+            "https://i.postimg.cc/cCWD3gqZ/Skyrim-SE-2026-01-04-22-56-22-449.png",
+            "https://i.postimg.cc/3rFj9jdP/Skyrim-SE-2026-01-05-01-50-51-731.png",
+            "https://i.postimg.cc/050GZGbB/Skyrim-SE-2026-01-05-01-53-19-578.png",
+            "https://i.postimg.cc/pVJQkQpG/Skyrim-SE-2026-01-05-01-56-20-619.png",
+            "https://i.postimg.cc/44Qvwvm0/Skyrim-SE-2026-01-05-02-03-31-567.png",
+            "https://i.postimg.cc/zDFwpwV6/Skyrim-SE-2026-01-05-02-03-50-653.png",
+            "https://i.postimg.cc/DzGLGL9p/Skyrim-SE-2026-01-05-02-04-13-574.png",
+            "https://i.postimg.cc/T1dDBSpB/Skyrim-SE-2026-01-05-02-06-54-647.png",
+            "https://i.postimg.cc/zXRz87KP/Skyrim-SE-2026-01-05-02-13-27-453.png",
+            "https://i.postimg.cc/HxHzs6r9/Skyrim-SE-2026-01-05-02-15-51-143.png",
+            "https://i.postimg.cc/sXymDTMh/Skyrim-SE-2026-01-05-02-19-53-689.png",
+            "https://i.postimg.cc/3JyXhsLh/Skyrim-SE-2026-01-05-02-23-44-919.png",
+            "https://i.postimg.cc/tC13bKrj/Skyrim-SE-2026-01-05-02-24-19-415.png",
+            "https://i.postimg.cc/FFqs9Pqr/Skyrim-SE-2026-01-06-17-58-48-955.png",
+            "https://i.postimg.cc/bYMNz6Ms/Skyrim-SE-2026-01-06-18-00-24-076.png",
+            "https://i.postimg.cc/sf8DVn8M/Skyrim-SE-2026-01-06-18-11-32-926.png",
+            "https://i.postimg.cc/BQKZtT9s/Skyrim-SE-2026-01-06-18-22-11-012.png",
+            "https://i.postimg.cc/j5ccHwp5/Skyrim-SE-2026-01-06-18-28-45-861.png",
+            "https://i.postimg.cc/7hkgWgzf/Skyrim-SE-2026-01-06-18-58-34-711.png",
+            "https://i.postimg.cc/Kj2nHnTT/Skyrim-SE-2026-01-06-18-59-34-780.png",
+            "https://i.postimg.cc/1XQpjpFg/Skyrim-SE-2026-01-06-18-59-46-463.png",
+            "https://i.postimg.cc/9XpYY67B/Skyrim-SE-2026-01-06-23-24-01-616.png",
+            "https://i.postimg.cc/ZYcxxGdc/Skyrim-SE-2026-01-06-23-24-33-973.png",
+            "https://i.postimg.cc/8kKr5Nv9/Skyrim-SE-2026-01-06-23-28-48-102.png",
+            "https://i.postimg.cc/kMh2qy0T/Skyrim-SE-2026-01-07-23-31-34-262.png",
+            "https://i.postimg.cc/tRmspzKD/Skyrim-SE-2026-01-07-23-31-53-089.png",
+            "https://i.postimg.cc/vTjThQ75/Skyrim-SE-2026-01-07-23-36-30-235.png",
+            "https://i.postimg.cc/kGZGsnNS/Skyrim-SE-2026-01-07-23-37-41-164.png",
+            "https://i.postimg.cc/rsbsj8Gx/Skyrim-SE-2026-01-07-23-37-59-689.png",
+            "https://i.postimg.cc/mkcWfrgn/Skyrim-SE-2026-01-07-23-20-53-706.png",
+            "https://i.postimg.cc/XqZ6SvY1/Skyrim-SE-2026-01-07-23-22-56-760.png",
+            "https://i.postimg.cc/hGDpqJt9/Skyrim-SE-2026-01-08-19-14-49-270.png",
+            "https://i.postimg.cc/gkzRy4WD/Skyrim-SE-2026-01-09-04-11-06-459.png",
+            "https://i.postimg.cc/HsY503g9/Skyrim-SE-2026-01-09-04-12-38-227.png",
+            "https://i.postimg.cc/9XtZqKvg/Skyrim-SE-2026-01-09-04-13-06-284.png",
+            "https://i.postimg.cc/h4bT76H2/Skyrim-SE-2026-01-09-04-13-39-019.png",
+            "https://i.postimg.cc/05dDJFLZ/Skyrim-SE-2026-01-09-04-14-51-618.png",
+            "https://i.postimg.cc/PfzY89By/Skyrim-SE-2026-01-09-04-16-03-554.png",
+            "https://i.postimg.cc/05dDJFLC/Skyrim-SE-2026-01-09-04-20-17-799.png",
+            "https://i.postimg.cc/h4bT76Hb/Skyrim-SE-2026-01-09-04-22-07-080.png",
+            "https://i.postimg.cc/T2qgWFZn/Skyrim-SE-2026-01-09-04-27-36-977.png",
+            "https://i.postimg.cc/HW4X7RfQ/Skyrim-SE-2026-01-09-04-29-02-251.png",
+            "https://i.postimg.cc/FFg3J82y/Skyrim-SE-2026-01-09-04-30-11-281.png",
+            "https://i.postimg.cc/jdnT1YtL/Skyrim-SE-2026-01-09-02-31-43-652.png",
+            "https://i.postimg.cc/Fskv6XNR/Skyrim-SE-2026-01-09-03-15-30-640.png",
+            "https://i.postimg.cc/WbqVycTp/Skyrim-SE-2026-01-09-03-16-00-221.png",
+            "https://i.postimg.cc/G35rzmwB/Skyrim-SE-2026-01-09-03-16-40-866.png",
+            "https://i.postimg.cc/kXRCHPq7/Skyrim-SE-2026-01-09-03-16-56-831.png",
+            "https://i.postimg.cc/BZVsNn9j/Skyrim-SE-2026-01-09-03-17-44-708.png",
+            "https://i.postimg.cc/7YJ4Rrwx/Skyrim-SE-2026-01-09-03-18-06-495.png",
+            "https://i.postimg.cc/02Kv41P7/Skyrim-SE-2026-01-09-03-18-47-786.png",
+            "https://i.postimg.cc/3J0hqQYm/Skyrim-SE-2026-01-09-03-27-36-365.png",
+            "https://i.postimg.cc/hPQnYRcx/Skyrim-SE-2026-01-09-03-28-25-104.png",
+            "https://i.postimg.cc/5NQJrWbF/Skyrim-SE-2026-01-09-03-29-27-829.png",
+            "https://i.postimg.cc/Nf2tnvB2/Skyrim-SE-2026-01-09-03-30-25-677.png",
+            "https://i.postimg.cc/02Kv41Pz/Skyrim-SE-2026-01-09-03-44-48-827.png",
+            "https://i.postimg.cc/P59QVvbY/Skyrim-SE-2026-01-09-18-26-11-742.png",
+            "https://i.postimg.cc/bwW9VS0D/Skyrim-SE-2026-01-09-18-26-34-012.png",
+            "https://i.postimg.cc/jSm43n6W/Skyrim-SE-2026-01-09-18-26-50-437.png",
+            "https://i.postimg.cc/DwHPp4Q4/Skyrim-SE-2026-01-09-18-26-52-420.png",
+            "https://i.postimg.cc/BnkB7P5b/Skyrim-SE-2026-01-09-18-27-14-266.png",
+            "https://i.postimg.cc/kG75nwC5/Skyrim-SE-2026-01-09-19-10-23-618.png",
+            "https://i.postimg.cc/qgf9dkCf/Skyrim-SE-2026-01-11-00-07-54-240.png",
+            "https://i.postimg.cc/2yLPJq3m/Skyrim-SE-2026-01-11-00-08-33-722.png",
+            "https://i.postimg.cc/RhJj83qM/Skyrim-SE-2026-01-11-00-08-53-070.png",
+            "https://i.postimg.cc/pr5g79yR/Skyrim-SE-2026-01-11-00-10-15-636.png",
+            "https://i.postimg.cc/PJvBcLNH/Skyrim-SE-2026-01-11-00-44-57-017.png",
+            "https://i.postimg.cc/hPWDngnJ/Skyrim-SE-2026-01-11-01-33-56-509.png",
+            "https://i.postimg.cc/pyNDwCR8/Skyrim-SE-2026-01-11-17-10-42-153.png",
+            "https://i.postimg.cc/yWqFMjsJ/Skyrim-SE-2026-01-11-17-12-20-369.png",
+            "https://i.postimg.cc/dDM8b6wL/Skyrim-SE-2026-01-11-17-12-39-624.png",
+            "https://i.postimg.cc/XXMwRL4r/Skyrim-SE-2026-01-11-17-19-21-586.png",
+            "https://i.postimg.cc/MGvRsg8G/Skyrim-SE-2026-01-11-17-49-59-373.png",
+            "https://i.postimg.cc/YSCzZFF2/Skyrim-SE-2026-01-13-20-27-09-166.png",
+            "https://i.postimg.cc/CKxsX88F/Skyrim-SE-2026-01-13-20-41-02-111.png",
+            "https://i.postimg.cc/HWfZngnz/Skyrim-SE-2026-01-15-09-21-52-922.png",
+            "https://i.postimg.cc/Wbg9JHq7/Skyrim-SE-2026-01-15-09-29-23-378.png",
+            "https://i.postimg.cc/vBnnSps2/Skyrim-SE-2026-01-15-09-34-05-627.png",
+            "https://i.postimg.cc/B6FFwd0y/Skyrim-SE-2026-01-15-09-37-07-047.png",
+            "https://i.postimg.cc/mD9960s6/Skyrim-SE-2026-01-15-09-37-46-549.png",
+            "https://i.postimg.cc/tJ5YKbMQ/Skyrim-SE-2026-01-15-09-39-14-628.png",
+            "https://i.postimg.cc/0jrRJKLB/Skyrim-SE-2026-01-15-20-28-37-107.png",
+            "https://i.postimg.cc/7hb8TJps/Skyrim-SE-2026-01-15-20-28-59-992.png",
+            "https://i.postimg.cc/d1HgvtL2/The-Elder-Scrolls-V-Skyrim-Special-Edition-Super-Resolution-2026-01-15-20-29-58-19.png",
+            "https://i.postimg.cc/B6YRsQXZ/The-Elder-Scrolls-V-Skyrim-Special-Edition-Super-Resolution-2026-01-15-20-30-25-60.png",
+            "https://i.postimg.cc/rwJS1P64/Skyrim-SE-2026-01-17-15-57-30-138.png",
+            "https://i.postimg.cc/W11YBrwQ/The-Elder-Scrolls-VSkyrim-Special-Edition2026-01-17-16-55-18-01-ezgif-com-optimize-(1).gif",
+            "https://i.postimg.cc/ryGhzgh4/Skyrim-SE-2026-01-17-16-52-34-025.png",
+            "https://i.postimg.cc/GmQpg0hZ/Skyrim-SE-2026-01-17-17-42-38-305.png",
+            "https://i.postimg.cc/2Sw59p8J/Skyrim-SE-2026-01-17-17-45-08-335.png",
+            "https://i.postimg.cc/3xBwfMJV/Skyrim-SE-2026-01-17-17-45-55-155.png",
+            "https://i.postimg.cc/qvL7DfMD/Skyrim-SE-2026-01-17-17-46-14-728.png",
+            "https://i.postimg.cc/4NXkLY7C/Skyrim-SE-2026-01-17-17-49-28-757.png",
+            "https://i.postimg.cc/dt7P5YXx/Skyrim-SE-2026-01-18-00-06-34-299.png",
+            "https://i.postimg.cc/657JMXS1/Skyrim-SE-2026-01-18-00-08-58-347.png",
+            "https://i.postimg.cc/fT3n8NFq/Skyrim-SE-2026-01-18-00-14-31-305.png",
+            "https://i.postimg.cc/d03xVmYG/Skyrim-SE-2026-01-18-00-24-57-839.png",
+            "https://i.postimg.cc/ZKKBJJsk/Skyrim-SE-2026-01-18-16-11-43-619.png",
+            "https://i.postimg.cc/RVV6vvp5/Skyrim-SE-2026-01-18-16-18-21-511.png",
+            "https://i.postimg.cc/6552BBjD/Skyrim-SE-2026-01-18-18-17-19-835.png",
+            "https://i.postimg.cc/pV1xnxXP/Skyrim-SE-2026-01-18-18-26-37-218.png",
+            "https://i.postimg.cc/Y2ykmkqM/Skyrim-SE-2026-01-18-18-27-47-300.png",
+            "https://i.postimg.cc/xCwthnrm/Skyrim-SE-2026-01-18-19-42-27-807.png",
+            "https://i.postimg.cc/852t9N8W/Skyrim-SE-2026-01-18-20-25-04-836.png",
+            "https://i.postimg.cc/PJ12k9hq/Skyrim-SE-2026-01-18-20-25-48-722.png",
+            "https://i.postimg.cc/nrq0tgZz/Skyrim-SE-2026-01-18-20-28-29-186.png",
+            "https://i.postimg.cc/3RLsVFzV/Skyrim-SE-2026-01-19-04-43-58-971.png",
+            "https://i.postimg.cc/1tWk2rbj/Skyrim-SE-2026-01-19-05-07-03-800.png",
+            "https://i.postimg.cc/Px6g9Q08/Skyrim-SE-2026-01-19-05-14-22-605.png",
+            "https://i.postimg.cc/4d8DqQjH/Skyrim-SE-2026-01-19-05-15-27-756.png",
+            "https://i.postimg.cc/ZRKkwMsd/Skyrim-SE-2026-01-19-19-05-32-298.png",
+            "https://i.postimg.cc/mD2xm5p3/Skyrim-SE-2026-01-19-19-07-32-163.png",
+            "https://i.postimg.cc/qRXfwdxX/Skyrim-SE-2026-01-19-20-21-12-407.png",
+            "https://i.postimg.cc/MTbk58mD/Skyrim-SE-2026-01-19-20-22-31-790.png",
+            "https://i.postimg.cc/151MGYWY/Skyrim-SE-2026-01-19-20-32-43-039.png",
+            "https://i.postimg.cc/28NTQXH9/Skyrim-SE-2026-01-19-20-33-51-659.png",
+            "https://i.postimg.cc/yx1xBK6V/Skyrim-SE-2026-01-19-20-35-12-974.png",
+            "https://i.postimg.cc/5y4y1J9f/Skyrim-SE-2026-01-19-20-35-32-474.png",
+            "https://i.postimg.cc/MH6HxwZq/Skyrim-SE-2026-01-19-20-38-14-308.png",
+            "https://i.postimg.cc/tghksdb7/Skyrim-SE-2026-01-19-21-23-44-790.png",
+            "https://i.postimg.cc/q7fQBbPn/Skyrim-SE-2026-01-19-21-23-46-290.png",
+            "https://i.postimg.cc/BvWNZYrF/Skyrim-SE-2026-01-19-21-26-51-290.png",
+            "https://i.postimg.cc/QMLSN42H/Skyrim-SE-2026-01-19-21-28-34-806.png",
+            "https://i.postimg.cc/RZJXB5D4/Skyrim-SE-2026-01-19-21-29-56-341.png",
+            "https://i.postimg.cc/fRSBNnrz/Skyrim-SE-2026-01-19-21-30-08-740.png",
+            "https://i.postimg.cc/52QnVdRJ/Skyrim-SE-2026-01-19-21-31-31-858.png",
+            "https://i.postimg.cc/MpfdS2F8/Skyrim-SE-2026-01-19-21-32-21-125.png",
+            "https://i.postimg.cc/8PPQVtMy/Skyrim-SE-2026-01-21-17-10-07-553.png",
+            "https://i.postimg.cc/tCCQH2W5/Skyrim-SE-2026-01-21-17-10-35-268.png",
+            "https://i.postimg.cc/ZKKthVpL/Skyrim-SE-2026-01-21-17-28-49-390.png",
+            "https://i.postimg.cc/5NNdMnLg/Skyrim-SE-2026-01-21-17-31-16-418.png",
+            "https://i.postimg.cc/jdd0rZP4/Skyrim-SE-2026-01-21-17-37-12-352.png",
+            "https://i.postimg.cc/bNDJhyQZ/ezgif-com-optimize-(1).gif",
+            "https://i.postimg.cc/Zqpt7fBL/Skyrim-SE-2026-01-24-16-37-25-841.png",
+            "https://i.postimg.cc/GpGw7M8x/Skyrim-SE-2026-01-24-16-56-16-925.png",
+            "https://i.postimg.cc/BvH9YhLp/Skyrim-SE-2026-01-24-17-03-35-305.png",
+            "https://i.postimg.cc/0NDRWtMw/Skyrim-SE-2026-01-24-17-04-01-274.png",
+            "https://i.postimg.cc/v84Y5dbJ/Skyrim-SE-2026-01-24-17-33-56-222.png",
+            "https://i.postimg.cc/kM2JWd7r/Skyrim-SE-2026-01-24-17-37-20-823.png",
+            "https://i.postimg.cc/fWVzYhD6/Skyrim-SE-2026-01-24-17-38-05-922.png",
+            "https://i.postimg.cc/Wz50RLYw/The-Elder-Scrolls-V-Skyrim-Special-Edition-Screenshot-2025-09-01-18-50-20-97.png",
+            "https://i.postimg.cc/8cZL8QXR/The-Elder-Scrolls-V-Skyrim-Special-Edition-Screenshot-2025-09-01-18-51-18-43.png",
+            "https://i.postimg.cc/tJBF0Qvz/The-Elder-Scrolls-V-Skyrim-Special-Edition-Screenshot-2025-09-01-18-53-42-56.png",
+            "https://i.postimg.cc/85yHh6Bg/Skyrim-SE-2026-01-24-19-23-07-624.png",
+            "https://i.postimg.cc/NMN41H7q/Skyrim-SE-2026-01-24-19-28-29-704.png",
+            "https://i.postimg.cc/xCsRKzyS/Skyrim-SE-2026-01-24-19-36-08-938.png",
+            "https://i.postimg.cc/FR133srm/Skyrim-SE-2026-01-24-21-00-25-533.png",
+            "https://i.postimg.cc/4dnVVNfg/Skyrim-SE-2026-01-24-21-00-43-219.png",
+            "https://i.postimg.cc/bJdkkNyP/Skyrim-SE-2026-01-24-21-00-46-235.png",
+            "https://i.postimg.cc/1t4ww5ms/Skyrim-SE-2026-01-24-21-01-34-762.png",
+            "https://i.postimg.cc/k4Z8c3GS/Skyrim-SE-2026-01-24-21-02-51-502.png",
+            "https://i.postimg.cc/d1XdBP3V/Skyrim-SE-2026-01-24-21-02-54-054.png",
+            "https://i.postimg.cc/B6yDg9bb/Skyrim-SE-2026-01-24-21-02-57-835.png",
+            "https://i.postimg.cc/k4Z8c3GX/Skyrim-SE-2026-01-24-21-03-05-940.png",
+            "https://i.postimg.cc/xCqMMTfm/Skyrim-SE-2026-01-24-21-03-18-736.png",
+            "https://i.postimg.cc/d1DrrtsL/Skyrim-SE-2026-01-24-21-03-27-152.png",
+            "https://i.postimg.cc/50jLLN4y/Skyrim-SE-2026-01-24-21-03-58-252.png",
+            "https://i.postimg.cc/pTyzzXWd/Skyrim-SE-2026-01-24-21-04-18-346.png",
+            "https://i.postimg.cc/263hh8kS/Skyrim-SE-2026-01-24-21-29-47-276.png",
+            "https://i.postimg.cc/dt0DX5k2/Skyrim-SE-2026-01-24-21-38-52-499.png",
+            "https://i.postimg.cc/pdMFgDM0/23131313.png",
+            "https://i.postimg.cc/90QN5D73/Skyrim-SE-2026-01-24-23-34-12-752.png",
+            "https://i.postimg.cc/C5x6TRf3/Skyrim-SE-2026-01-24-23-59-58-053.png",
+            "https://i.postimg.cc/HWXZzpHM/Skyrim-SE-2026-01-25-10-20-08-674.png",
+            "https://i.postimg.cc/qBybwk0h/Skyrim-SE-2026-01-25-10-21-12-341.png",
+            "https://i.postimg.cc/wxLf26HR/Skyrim-SE-2026-01-25-10-21-13-908.png",
+            "https://i.postimg.cc/8kMK41DW/Skyrim-SE-2026-01-25-10-22-34-424.png",
+            "https://i.postimg.cc/HWXZzpHt/Skyrim-SE-2026-01-25-10-23-42-411.png",
+            "https://i.postimg.cc/gc8SsYdH/Skyrim-SE-2026-01-25-10-25-03-948.png",
+            "https://i.postimg.cc/RCKsdM9R/Skyrim-SE-2026-01-25-10-25-43-838.png",
+            "https://i.postimg.cc/SQCTdyqd/Skyrim-SE-2026-01-25-10-27-01-656.png",
+            "https://i.postimg.cc/c1w9hsZD/Skyrim-SE-2026-01-25-10-29-43-773.png",
+            "https://i.postimg.cc/SQCTdyq1/Skyrim-SE-2026-01-25-10-33-22-307.png",
+            "https://i.postimg.cc/qBwn4YxS/Skyrim-SE-2026-01-25-10-41-12-872.png",
+            "https://i.postimg.cc/zD7W8MF4/Skyrim-SE-2026-01-25-10-41-30-606.png",
+            "https://i.postimg.cc/DwZ9y84H/Skyrim-SE-2026-01-25-12-57-42-173.png",
+            "https://i.postimg.cc/0yQT2bKB/Skyrim-SE-2026-01-25-12-58-10-957.png",
+            "https://i.postimg.cc/520hN6Q7/Skyrim-SE-2026-01-25-12-59-05-205.png",
+            "https://i.postimg.cc/brCNdrr8/Skyrim-SE-2026-01-27-16-23-02-051.png",
+            "https://i.postimg.cc/cCTDtKV7/Skyrim-SE-2026-01-27-17-31-51-949.png",
+            "https://i.postimg.cc/2yTHLqPb/Skyrim-SE-2026-01-27-17-38-08-883.png",
+            "https://i.postimg.cc/6qzH47DG/Skyrim-SE-2026-01-27-17-40-06-384.png",
+            "https://i.postimg.cc/7YnV6Tgw/Skyrim-SE-2026-01-27-18-06-32-069.png",
+            "https://i.postimg.cc/sxkm0F78/Skyrim-SE-2026-01-28-03-53-41-661.png",
+            "https://i.postimg.cc/fyGCg4mr/Skyrim-SE-2026-01-28-04-41-22-163.png",
+            "https://i.postimg.cc/FzMpnt3W/Skyrim-SE-2026-01-28-04-43-08-713.png",
+            "https://i.postimg.cc/6qkc1snH/Skyrim-SE-2026-01-28-04-43-22-837.png",
+            "https://i.postimg.cc/j2pckVP3/Skyrim-SE-2026-01-28-04-43-51-939.png",
+            "https://i.postimg.cc/yxMjrqcP/Skyrim-SE-2026-01-28-04-44-43-945.png",
+            "https://i.postimg.cc/Nfb7HrzG/Skyrim-SE-2026-01-28-04-46-00-428.png",
+            "https://i.postimg.cc/bwJ0HNKK/Skyrim-SE-2026-01-28-04-54-06-802.png",
+            "https://i.postimg.cc/c4TMn8bx/Skyrim-SE-2026-01-28-04-54-37-611.png",
+            "https://i.postimg.cc/zGhx5t0f/Skyrim-SE-2026-01-28-18-48-29-726.png",
+            "https://i.postimg.cc/LhKZVTfg/Skyrim-SE-2026-01-28-18-52-13-792.png",
+            "https://i.postimg.cc/gJ1Kf38Z/Skyrim-SE-2026-01-28-18-52-58-591.png",
+            "https://i.postimg.cc/cH4bZLw2/Skyrim-SE-2026-01-29-18-22-41-657.png",
+            "https://i.postimg.cc/kX6XqnyN/Skyrim-SE-2026-01-29-18-28-49-596.png",
+            "https://i.postimg.cc/X7G74Vgf/Skyrim-SE-2026-01-29-18-34-19-334.png",
+            "https://i.postimg.cc/cL96xN18/ezgif-com-animated-gif-maker-(3).gif",
+            "https://i.postimg.cc/SN9yzV23/Skyrim-SE-2026-01-28-18-15-13-628.png",
+            "https://i.postimg.cc/9F9Wq1Rn/Skyrim-SE-2026-01-28-18-20-24-329.png",
+            "https://i.postimg.cc/VLtYb4rG/Skyrim-SE-2026-01-29-18-47-38-618.png",
+            "https://i.postimg.cc/fTdw05tj/Skyrim-SE-2026-01-29-18-48-19-905.png",
+            "https://i.postimg.cc/DfHvZRZc/Skyrim-SE-2026-01-29-18-49-09-443.png",
+            "https://i.postimg.cc/28WzBTb4/Skyrim-SE-2026-01-29-18-51-17-177.png",
+            "https://i.postimg.cc/3rV8RzRC/Skyrim-SE-2026-01-29-18-54-03-719.png",
+            "https://i.postimg.cc/QM6m5k5n/pngegg.png",
+            "https://i.postimg.cc/0QT3kv01/Skyrim-SE-2026-02-02-03-16-49-698.png",
+            "https://i.postimg.cc/V6xTfwWc/Skyrim-SE-2026-02-02-03-21-38-184.png",
+            "https://i.postimg.cc/dQgGLQKN/Skyrim-SE-2026-02-04-17-33-43-452.png",
+            "https://i.postimg.cc/Y2TQh2wy/Skyrim-SE-2026-02-04-17-33-55-900.png",
+            "https://i.postimg.cc/c1Pfr1Nb/Skyrim-SE-2026-02-04-17-34-09-532.png",
+            "https://i.postimg.cc/BZjxSLRz/Skyrim-SE-2026-02-04-17-34-58-982.png",
+            "https://i.postimg.cc/MK9kwLBF/Skyrim-SE-2026-02-04-18-03-32-667.png",
+            "https://i.postimg.cc/9Q06QBPs/Skyrim-SE-2026-02-04-18-06-21-483.png",
+            "https://i.postimg.cc/MpHCpYb8/Skyrim-SE-2026-02-04-18-09-51-616.png",
+            "https://i.postimg.cc/cJb95qVf/Screenshot-13.png"
+        ];
+
+        // Keep order as listed (no reversing)
+        const SHOTS_VIEW = SHOTS.slice();
+
+        // Pagination
+        const PER_PAGE = 30;
+        let page = 1;
+
+        const grid = document.getElementById('galleryGrid');
+        const pager = document.getElementById('pager');
+        const countEl = document.getElementById('shotCount');
+
+        function render() {
+            if (!grid || !pager || !countEl) return;
+
+            const total = SHOTS_VIEW.length;
+            countEl.textContent = total;
+
+            const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+            page = Math.min(Math.max(1, page), pages);
+
+            const start = (page - 1) * PER_PAGE;
+            const items = SHOTS_VIEW.slice(start, start + PER_PAGE);
+
+            grid.innerHTML = items.map((src, idx) => {
+                const n = start + idx + 1;
+                const label = String(n).padStart(3, '0');
+                const isGif = /\.gif(\?|$)/i.test(src);
+                const alt = `Screenshot ${n}`;
+                return `
+                    <div class="gallery-item" data-src="${src}">
+                        <img loading="lazy" src="${src}" alt="${alt}" style="${isGif ? 'image-rendering:auto;' : ''}">
+                        <div class="gallery-caption">SCREENSHOT #${label}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Lightbox bindings
+            bindLightbox();
+
+            // Pager
+            const btn = (text, onClick, disabled = false, active = false) => {
+                const dis = disabled ? 'opacity:0.35; pointer-events:none;' : '';
+                const act = active ? 'background: rgba(50, 50, 50, 0.95); transform: translateY(-2px);' : '';
+                return `<button class="nav-tab" style="font-size:8px; padding: 8px 14px; ${dis} ${act}" ${disabled ? 'disabled' : ''}>${text}</button>`;
+            };
+
+            const pageButtons = [];
+            const maxButtons = 7;
+            let from = Math.max(1, page - Math.floor(maxButtons / 2));
+            let to = Math.min(pages, from + maxButtons - 1);
+            from = Math.max(1, to - maxButtons + 1);
+
+            pageButtons.push({ type: 'prev' });
+            for (let p = from; p <= to; p++) pageButtons.push({ type: 'page', p });
+            pageButtons.push({ type: 'next' });
+
+            pager.innerHTML = pageButtons.map((b) => {
+                if (b.type === 'prev') return btn('PREV', null, page === 1);
+                if (b.type === 'next') return btn('NEXT', null, page === pages);
+                return btn(String(b.p), null, false, b.p === page);
+            }).join('');
+
+            const buttons = Array.from(pager.querySelectorAll('button'));
+            let bi = 0;
+            // prev
+            buttons[bi++].addEventListener('click', () => { page--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+            // pages
+            for (let p = from; p <= to; p++) {
+                const el = buttons[bi++];
+                el.addEventListener('click', () => { page = p; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+            }
+            // next
+            buttons[bi++].addEventListener('click', () => { page++; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        }
+
+        // Lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        function openLightbox(src) {
+            if (!lightbox || !lightboxImg) return;
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            if (!lightbox) return;
+            lightbox.classList.remove('active');
+            if (lightboxImg) lightboxImg.src = '';
+        }
+
+        function bindLightbox() {
+            const items = Array.from(document.querySelectorAll('.gallery-item'));
+            items.forEach((item) => {
+                item.addEventListener('click', () => {
+                    const src = item.getAttribute('data-src');
+                    if (src) openLightbox(src);
+                });
+            });
+        }
+
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        if (lightbox) {
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        render();
+
+        // 18+ Gate (localStorage)
+        const gateOverlay = document.getElementById('gateOverlay');
+        const ageCheck = document.getElementById('ageCheck');
+        const okBtn = document.getElementById('okBtn');
+        const bruhBtn = document.getElementById('bruhBtn');
+
+        function setGate(active) {
+            const all = [
+                document.getElementById('hexPattern'),
+                document.getElementById('noiseLayer'),
+                document.getElementById('scanlinesLayer'),
+                document.getElementById('vhsLeft'),
+                document.getElementById('vhsRight'),
+                document.getElementById('hLine'),
+                document.getElementById('navTabs'),
+                document.querySelector('.page-title'),
+                document.querySelector('.gallery-container'),
+                document.querySelector('[style*="top: 75px; right: 20px"]')
+            ].filter(Boolean);
+
+            all.forEach(el => {
+                if (active) el.classList.add('blur-under');
+                else el.classList.remove('blur-under');
+            });
+
+            if (gateOverlay) gateOverlay.classList.toggle('active', active);
+        }
+
+        const consentKey = 'iyorshka_shots_age_ok_v1';
+        const hasConsent = localStorage.getItem(consentKey) === '1';
+        if (!hasConsent) setGate(true);
+
+        if (ageCheck && okBtn) {
+            ageCheck.addEventListener('change', () => {
+                okBtn.disabled = !ageCheck.checked;
+            });
+        }
+
+        if (okBtn) {
+            okBtn.addEventListener('click', () => {
+                if (!ageCheck || !ageCheck.checked) return;
+                localStorage.setItem(consentKey, '1');
+                setGate(false);
+            });
+        }
+
+        if (bruhBtn) {
+            bruhBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        // Custom Cursor
+        const customCursor = document.getElementById('customCursor');
+        document.addEventListener('mousemove', (e) => {
+            if (!customCursor) return;
+            customCursor.style.left = e.clientX + 'px';
+            customCursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseleave', () => {
+            if (customCursor) customCursor.style.opacity = '0';
+        });
+        document.addEventListener('mouseenter', () => {
+            if (customCursor) customCursor.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>
