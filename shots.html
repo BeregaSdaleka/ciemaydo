@@ -474,6 +474,40 @@
             box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
         }
 
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 46px;
+            border: 2px solid #ffffff;
+            background: rgba(10,10,10,0.85);
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+            user-select: none;
+        }
+        .lightbox-nav:hover {
+            background: rgba(30,30,30,0.9);
+            transform: translateY(calc(-50% + 2px));
+            box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+        }
+        .lightbox-nav:active {
+            transform: translateY(calc(-50% + 3px));
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0.8);
+        }
+        .lightbox-prev { left: 8px; }
+        .lightbox-next { right: 8px; }
+
+        @media (max-width: 520px) {
+            .lightbox-nav { width: 34px; height: 40px; font-size: 12px; }
+        }
+
         .lightbox-media {
             width: 100%;
             height: 100%;
@@ -731,6 +765,8 @@
     <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
         <div class="lightbox-window chromatic-border">
             <button class="lightbox-close" id="lightboxClose" aria-label="Close">X</button>
+            <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">‹</button>
+            <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">›</button>
             <div class="lightbox-media">
                 <img id="lightboxImg" alt="Full size" />
             </div>
@@ -1011,7 +1047,7 @@
         const SHOTS_VIEW = SHOTS.slice();
 
         // Pagination
-        const PER_PAGE = 30;
+        const PER_PAGE = 32;
         let page = 1;
 
         const grid = document.getElementById('galleryGrid');
@@ -1035,9 +1071,25 @@
                 const label = String(n).padStart(3, '0');
                 const isGif = /\.gif(\?|$)/i.test(src);
                 const alt = `Screenshot ${n}`;
+                const globalIdx = start + idx; // index in SHOTS_VIEW
+
+                // Try to request a smaller thumbnail from postimg when possible.
+                // postimg supports width param (?w=...), which returns a resized image.
+                const thumb = (!isGif && /^https:\/\/i\.postimg\.cc\//i.test(src)) ? (src + (src.includes('?') ? '&' : '?') + 'w=640') : src;
+
+                // Load first few thumbnails eagerly for perceived speed, rest lazy.
+                const eager = idx < 8;
+
                 return `
-                    <div class="gallery-item" data-src="${src}">
-                        <img loading="lazy" src="${src}" alt="${alt}" style="${isGif ? 'image-rendering:auto;' : ''}">
+                    <div class="gallery-item" data-src="${src}" data-idx="${globalIdx}">
+                        <img 
+                            ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
+                            decoding="async"
+                            src="${thumb}" 
+                            data-full="${src}"
+                            alt="${alt}" 
+                            width="640" height="360"
+                            style="${isGif ? 'image-rendering:auto;' : ''}">
                         <div class="gallery-caption">SCREENSHOT #${label}</div>
                     </div>
                 `;
@@ -1087,27 +1139,54 @@
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxClose = document.getElementById('lightboxClose');
 
-        function openLightbox(src) {
+        // Lightbox
+        const lightboxPrev = document.getElementById('lightboxPrev');
+        const lightboxNext = document.getElementById('lightboxNext');
+
+        let currentIndex = -1; // index in SHOTS_VIEW
+
+        function showAt(idx) {
             if (!lightbox || !lightboxImg) return;
-            lightboxImg.src = src;
+            const total = SHOTS_VIEW.length;
+            if (!total) return;
+            currentIndex = ((idx % total) + total) % total;
+            lightboxImg.src = SHOTS_VIEW[currentIndex];
             lightbox.classList.add('active');
+        }
+
+        function openLightboxAt(idx) {
+            showAt(idx);
         }
 
         function closeLightbox() {
             if (!lightbox) return;
             lightbox.classList.remove('active');
             if (lightboxImg) lightboxImg.src = '';
+            currentIndex = -1;
         }
 
         function bindLightbox() {
             const items = Array.from(document.querySelectorAll('.gallery-item'));
             items.forEach((item) => {
                 item.addEventListener('click', () => {
-                    const src = item.getAttribute('data-src');
-                    if (src) openLightbox(src);
+                    const idx = Number(item.getAttribute('data-idx'));
+                    if (!Number.isNaN(idx)) openLightboxAt(idx);
                 });
             });
         }
+
+        function prevShot() {
+            if (currentIndex < 0) return;
+            showAt(currentIndex - 1);
+        }
+
+        function nextShot() {
+            if (currentIndex < 0) return;
+            showAt(currentIndex + 1);
+        }
+
+        if (lightboxPrev) lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); prevShot(); });
+        if (lightboxNext) lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); nextShot(); });
 
         if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
         if (lightbox) {
@@ -1117,6 +1196,8 @@
         }
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') prevShot();
+            if (e.key === 'ArrowRight') nextShot();
         });
 
         render();
